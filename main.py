@@ -9,21 +9,21 @@ import pyodbc
 from sql import carteira, cliente_query, delete, insert, query, vendedor_query
 
 # # Construir a string de conexão
-# connection_string = (
-#     r'DRIVER={SQL Server};'
-#     r'SERVER=192.168.1.22;'
-#     r'DATABASE=TESTE;'
-#     r'UID=sa;'
-#     r'PWD=Moitgt2526;'
-# )
-
 connection_string = (
     r'DRIVER={SQL Server};'
-    r'SERVER=192.168.2.10;'
-    r'DATABASE=MOINHO;'
+    r'SERVER=192.168.1.22;'
+    r'DATABASE=TESTE;'
     r'UID=sa;'
-    r'PWD=moitgt2526;'
+    r'PWD=Moitgt2526;'
 )
+
+# connection_string = (
+#     r'DRIVER={SQL Server};'
+#     r'SERVER=192.168.2.10;'
+#     r'DATABASE=MOINHO;'
+#     r'UID=sa;'
+#     r'PWD=moitgt2526;'
+# )
 
 # # Consulta SQL para verificar a existência da combinação (cd_clien, cd_vend)
 # query = "SELECT * FROM dbo.clientelev WHERE cd_clien = ? AND cd_vend = ?"
@@ -69,40 +69,40 @@ def verificar_combinacao(cd_clien, cd_vend, aba):
         text_box.insert(tk.END, f'\n(cd_clien = {cd_clien_str}, cd_vend = {cd_vend_str}) - cd_clien {cd_clien_str}: INVÁLIDO')
         # Fechar a conexão com o banco de dados
         return
-
-    cursor.execute(vendedor_query, cd_vend)
-    vend_row = cursor.fetchall()
-
-    if not vend_row:
-        text_box.insert(tk.END, f'\n(cd_clien = {cd_clien_str}, cd_vend = {cd_vend_str}) - cd_vend {cd_vend_str}: INVÁLIDO')
-        # Fechar a conexão com o banco de dados
-        return
-
-    # Verificar se a combinação existe
-    if row:
-        mensagem = f"\n(cd_clien = {cd_clien_str}, cd_vend = {cd_vend_str}) já existe."
-        text_box.insert(tk.END, mensagem)
-        if aba == "Remover":
-            # mensagem_delete = "Executando DELETE..."
-            # text_box.insert(tk.END, mensagem_delete)
-            cursor.execute(delete, (cd_clien_str, cd_vend_str))
-            conn.commit()
-            mensagem = f"\n - DELETADO COM SUCESSO."
-            text_box.insert(tk.END, mensagem)
-        else:
-            mensagem = f"\n(cd_clien = {cd_clien_str}, cd_vend = {cd_vend_str}) - Já existe."
-            text_box.insert(tk.END, mensagem)
     else:
-        mensagem = f"\n(cd_clien = {cd_clien_str}, cd_vend = {cd_vend_str}) - não existe."
-        text_box.insert(tk.END, mensagem)
-        if aba == "Incluir":
-            cursor.execute(insert, (cd_clien_str, cd_vend_str))
-            conn.commit()
-            mensagem = f"\n - INCLUÍDO  COM SUCESSO."
-            text_box.insert(tk.END, mensagem)
+        cursor.execute(vendedor_query, cd_vend)
+        vend_row = cursor.fetchall()
+
+        if not vend_row:
+            text_box.insert(tk.END, f'\n(cd_clien = {cd_clien_str}, cd_vend = {cd_vend_str}) - cd_vend {cd_vend_str}: INVÁLIDO')
+            # Fechar a conexão com o banco de dados
+            return
+
+        # Verificar se a combinação existe
+        if row:
+            # mensagem = f"\n(cd_clien = {cd_clien_str}, cd_vend = {cd_vend_str}) já existe."
+            # text_box.insert(tk.END, mensagem)
+            if aba == "Remover":
+                # mensagem_delete = "Executando DELETE..."
+                # text_box.insert(tk.END, mensagem_delete)
+                cursor.execute(delete, (cd_clien_str, cd_vend_str))
+                conn.commit()
+                mensagem = f"\n(cd_clien = {cd_clien_str}, cd_vend = {cd_vend_str}) - REMOVIDO COM SUCESSO."
+                text_box.insert(tk.END, mensagem)
+            else:
+                mensagem = f"\n(cd_clien = {cd_clien_str}, cd_vend = {cd_vend_str}) - Já existe."
+                text_box.insert(tk.END, mensagem)
         else:
-            mensagem = f"\n(cd_clien = {cd_clien_str}, cd_vend = {cd_vend_str}) - Não existe."
-            text_box.insert(tk.END, mensagem)
+            # mensagem = f"\n(cd_clien = {cd_clien_str}, cd_vend = {cd_vend_str}) - não existe."
+            # text_box.insert(tk.END, mensagem)
+            if aba == "Incluir":
+                cursor.execute(insert, (cd_clien_str, cd_vend_str))
+                conn.commit()
+                mensagem = f"\n(cd_clien = {cd_clien_str}, cd_vend = {cd_vend_str}) - INCLUÍDO  COM SUCESSO."
+                text_box.insert(tk.END, mensagem)
+            else:
+                mensagem = f"\n(cd_clien = {cd_clien_str}, cd_vend = {cd_vend_str}) - Não existe."
+                text_box.insert(tk.END, mensagem)
     
 def extrair_carteira():
     # Executar a consulta para obter a carteira de televendas
